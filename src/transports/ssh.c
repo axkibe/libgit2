@@ -212,6 +212,11 @@ static void ssh_stream_free(git_smart_subtransport_stream *stream)
 		s->channel = NULL;
 	}
 
+	if ((t->owner->ssh_session_hook))
+	{
+		t->owner->ssh_session_hook(GIT_SSH_SESSION_HOOK_RELEASE, s->url, &s->io, &s->session);
+	}
+
 	if (s->session) {
 		libssh2_session_disconnect(s->session, "closing transport");
 		libssh2_session_free(s->session);
@@ -551,6 +556,13 @@ static int _git_ssh_setup_conn(
 	GIT_ERROR_CHECK_ALLOC(urldata.port);
 
 post_extract:
+	if ((t->owner->ssh_session_hook))
+	{
+		if ((error = t->owner->ssh_session_hook(GIT_SSH_SESSION_HOOK_REQUEST, url, &s->io, &session)) < 0)
+			goto done;
+		if (session) goto channel;
+	}
+
 	if ((error = git_socket_stream_new(&s->io, urldata.host, urldata.port)) < 0 ||
 	    (error = git_stream_connect(s->io)) < 0)
 		goto done;
@@ -694,6 +706,13 @@ post_extract:
 	if (error < 0)
 		goto done;
 
+	if ((t->owner->ssh_session_hook))
+	{
+		if ((error = t->owner->ssh_session_hook(GIT_SSH_SESSION_HOOK_PREPARE, url, NULL, &session)) < 0)
+			goto done;
+	}
+
+channel:
 	channel = libssh2_channel_open_session(session);
 	if (!channel) {
 		error = -1;

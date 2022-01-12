@@ -762,7 +762,7 @@ static int remote_transport_set_callbacks(git_transport *t, const git_remote_cal
 		return 0;
 
 	return t->set_callbacks(t, cbs->sideband_progress, NULL,
-				cbs->certificate_check, cbs->payload);
+				cbs->certificate_check, cbs->ssh_session_hook, cbs->payload);
 }
 
 static int set_transport_custom_headers(git_transport *t, const git_strarray *custom_headers)

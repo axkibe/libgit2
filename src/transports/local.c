@@ -637,11 +637,13 @@ static int local_set_callbacks(
 	git_transport_message_cb progress_cb,
 	git_transport_message_cb error_cb,
 	git_transport_certificate_check_cb certificate_check_cb,
+	git_ssh_session_hook ssh_session_hook,
 	void *message_cb_payload)
 {
 	transport_local *t = (transport_local *)transport;
 
 	GIT_UNUSED(certificate_check_cb);
+	GIT_UNUSED(ssh_session_hook);
 
 	t->progress_cb = progress_cb;
 	t->error_cb = error_cb;

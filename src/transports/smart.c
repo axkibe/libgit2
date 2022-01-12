@@ -61,6 +61,7 @@ static int git_smart__set_callbacks(
 	git_transport_message_cb progress_cb,
 	git_transport_message_cb error_cb,
 	git_transport_certificate_check_cb certificate_check_cb,
+	git_ssh_session_hook ssh_session_hook,
 	void *message_cb_payload)
 {
 	transport_smart *t = GIT_CONTAINER_OF(transport, transport_smart, parent);
@@ -69,6 +70,7 @@ static int git_smart__set_callbacks(
 	t->error_cb = error_cb;
 	t->certificate_check_cb = certificate_check_cb;
 	t->message_cb_payload = message_cb_payload;
+	t->ssh_session_hook = ssh_session_hook;
 
 	return 0;
 }

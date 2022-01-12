@@ -575,6 +575,12 @@ struct git_remote_callbacks {
 	git_indexer_progress_cb transfer_progress;
 
 	/**
+	 * Allows the application to keep ssh sessions alive.
+	 * and/or modify them before use.
+	 */
+	git_ssh_session_hook ssh_session_hook;
+
+	/**
 	 * Each time a reference is updated locally, this function
 	 * will be called with information about it.
 	 */

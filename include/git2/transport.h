@@ -12,6 +12,7 @@
 #include "types.h"
 #include "cert.h"
 #include "credential.h"
+#include "sys/stream.h"
 
 /**
  * @file git2/transport.h
@@ -35,6 +36,22 @@ typedef int GIT_CALLBACK(git_transport_message_cb)(const char *str, int len, voi
 
 /** Signature of a function which creates a transport */
 typedef int GIT_CALLBACK(git_transport_cb)(git_transport **out, git_remote *owner, void *param);
+
+/**
+ * Hook for ssh sessions.
+ *
+ * REQUEST: called to get new (or used) session
+ * PREPARE: called before using a new session
+ * RELEASE: called before closing/freeing a session
+ **/
+typedef enum{
+	GIT_SSH_SESSION_HOOK_REQUEST = 1,
+	GIT_SSH_SESSION_HOOK_PREPARE = 2,
+	GIT_SSH_SESSION_HOOK_RELEASE = 3
+} git_ssh_session_hook_state_t;
+
+typedef int GIT_CALLBACK(git_ssh_session_hook)(git_ssh_session_hook_state_t state, const char *url, git_stream **io, LIBSSH2_SESSION **session);
+
 
 /** @} */
 GIT_END_DECL
